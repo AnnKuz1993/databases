@@ -1,0 +1,15 @@
+Ответ на 4 вопрос:
+Выбрала сервис для курсового проекта: интернет-магазин PANDORA.
+
+Структура:
+1. Customer (firstname, lastname, birth_day, e-mail, password)
+2. Types (браслеты, кольца, серьги и т.д.)
+3. Materials (золото, серебро и т.д.)
+4. Size (от 15 до 80)
+5. Price 
+6. Orders 
+7. Stock (условия акции, товар, скидка)
+8. Search (по названию товара)
+9. Accounts
+10. Documents_order 
+11. Products

@@ -1,13 +1,14 @@
 use shop;
 
-DELIMITER //
-
 DROP TRIGGER IF EXISTS not_null;
-CREATE TRIGGER not_null AFTER INSERT ON products
+DELIMITER //
+CREATE TRIGGER not_null before INSERT ON products
 FOR EACH ROW
 BEGIN
-	DECLARE name, description VARCHAR(255);
-	IF name, description = null  then 
-		SIGNAL SQLSTATE '101' SET MESSAGE_TEXT = 'Отмена операции';
+	IF NEW.name is null and NEW.desciption is null then
+	SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Both name and description are NULL';
   END IF;
 END //
+
+DELIMITER ;

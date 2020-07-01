@@ -1,4 +1,4 @@
-use pandora;
+use PANDORA_v2;
 
 select * from customers;
 select * from products;
@@ -53,14 +53,12 @@ select
     sum(o_p.total) as total,
     sum(price) as cost
 from customers c
-join accounts a 
-	on a.customer_id = c.id
 join orders o 
 	on o.customer_id = c.id
 join orders_products o_p
 	on o.id = o_p.order_id
 join products p
-	on p.id = o.product_id
+	on p.id = o_p.product_id
 group by customer
 order by count_orders desc;
 

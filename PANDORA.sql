@@ -1,6 +1,6 @@
-drop database if exists PANDORA;
-create database PANDORA;
-use PANDORA;
+drop database if exists PANDORA_v2;
+create database PANDORA_v2;
+use PANDORA_v2;
 SET FOREIGN_KEY_CHECKS=0; /* отключает внешний ключ (помогает заносить данные в таблицу): CHECKS=0 - ключ выключен, CHECKS=1 - включен */
 
 drop table if exists customers;
@@ -10,26 +10,16 @@ create table customers (
     lastname varchar (50) not null COMMENT 'Фамилия',
     email varchar (250) unique not null COMMENT 'Почта (логин)',
     phone bigint not null,
+    password varchar (60) unique not null COMMENT 'Пароль',
+    birthday_at DATE COMMENT 'Дата рождения',
+    address varchar (250) COMMENT 'Адрес',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата добавления записи',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения записи',
     deleted_at DATETIME NULL DEFAULT NULL COMMENT 'Дата удаления записи',
     
     INDEX customers_firstname_lastname_idx(firstname, lastname)
 ) COMMENT = 'Покупатели';
-      
-drop table if exists accounts;
-create table accounts (
-	customer_id serial primary key,
-	`password` varchar (60) unique not null COMMENT 'Пароль',
-	birthday_at DATE COMMENT 'Дата рождения',
-	address varchar (250) COMMENT 'Адрес',
-	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата добавления записи',
-	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения записи',
-	deleted_at DATETIME NULL DEFAULT NULL COMMENT 'Дата удаления записи',
-        
-	FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE ON UPDATE CASCADE
-) COMMENT = 'Личный кабинет';
-    
+
 create table product_types (
 	id SERIAL PRIMARY KEY,
     `name` varchar (100) not null COMMENT 'Тип',
@@ -37,7 +27,6 @@ create table product_types (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения записи',
     deleted_at DATETIME NULL DEFAULT NULL COMMENT 'Дата удаления записи'
 ) COMMENT = 'Типы продукции';
-
 
 drop table if exists products;
 create table products (
@@ -71,25 +60,24 @@ drop table if exists orders;
 create table orders (
 	 id SERIAL PRIMARY KEY,
      customer_id BIGINT UNSIGNED NOT NULL,
-     product_id BIGINT UNSIGNED NOT NULL, 
      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата добавления записи',
      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения записи',
      deleted_at DATETIME NULL DEFAULT NULL COMMENT 'Дата удаления записи',
-     
+    
      INDEX customers_idx(customer_id),
-     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE ON UPDATE CASCADE,
-     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE
+     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = 'Заказы';
 
 drop table if exists orders_products;
 create table orders_products (
 	id SERIAL PRIMARY KEY,
     order_id BIGINT UNSIGNED NOT NULL,
+    product_id BIGINT UNSIGNED NOT NULL, 
     total INT UNSIGNED DEFAULT 1 COMMENT 'Количество заказанных товарных позиций',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата добавления записи',
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата изменения записи',
 	deleted_at DATETIME NULL DEFAULT NULL COMMENT 'Дата удаления записи',
-    
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = 'Состав заказа';
 
@@ -130,3 +118,4 @@ create table storehouses_products (
     FOREIGN KEY (storehouse_id) REFERENCES storehouses(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = 'Запасы на складе';
+
